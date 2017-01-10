@@ -1,0 +1,3 @@
+#格式: [URL method]  eg. https://www.baidu.com GET
+http://idas.uestc.edu.cn/authserver/login?service=http://portal.uestc.edu.cn/index.portal POST
+http://portal.uestc.edu.cn/ GET
