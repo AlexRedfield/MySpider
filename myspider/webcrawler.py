@@ -41,6 +41,8 @@ class WebCrawler(object):
             if len(url_dict['data']) > data_count:
                 req.data = url_dict['data'][data_count]
                 data_count += 1
+            for ele in url_dict['addparam']:
+                req.data[ele[1]] = self.url.url[int(ele[0])-1]['text'][0]
 
             if len(self.header.header) > 0:
                 req.headers = self.header.header
@@ -54,22 +56,24 @@ class WebCrawler(object):
             else:
                 print "status_code:{0}".format(self.resp.status_code)
 
-            if data_count == len(url_dict['data']):
-                url_count += 1
 
             #数据分析
-            analyze = Analyze(self.parse.analyze_method)
-            self.text = analyze.analyze(self.resp.text, self.parse.analyze_rule)
+            analyze = Analyze()
+            text_list = analyze.analyze(self.resp.text, url_dict['re'])
+            self.url.url[url_count]['text'] = text_list
 
 
             #输出结果
             if self.parse.echo_method != 'xls':
                 #self.text = 'cookies:' + ''.join(self.cookie.values()) + '\n' + 'content:' + self.resp.content + '\n\n' + self.text
-                self.text = url_dict['value'] + '\n' + ''.join(str(s) for s in url_dict['data']) + '\n\n' + self.text
+                self.text = url_dict['value'] + '\n' + ''.join(str(s)+'\n' for s in url_dict['data']) + '\n\n' + \
+                            ''.join(s + '\n' for s in text_list)
                 echo.echo(self.parse.echo_method, self.text, url_count, data_count)
             else:
                 echo.echo_to_xls(self.text, self.parse.xls_list[0], self.parse.xls_list[1], self.parse.xls_list[2], self.parse.xls_title)
 
+            if data_count == len(url_dict['data']):
+                url_count += 1
 
     def get_data(self, rawdata):
         """

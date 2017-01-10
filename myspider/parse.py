@@ -4,8 +4,6 @@ class Parse(object):
 
     def __init__(self):
         self.echo_method = 'screen'
-        self.analyze_method = 'display'
-        self.analyze_rule = ''
         self.cookie_range = [-1, -1, -1]
         self.echo_range = [0, 99999]
         self.xls_list = []
@@ -17,21 +15,11 @@ class Parse(object):
         parser.add_argument('-c', default='false', nargs=3, help='-c n1 n2 n3 | cookies from n1st url will be sent to urls from a range of n2st to n3st')
         parser.add_argument('-e', default='false', nargs='*', help='-e method n1 n2 | \'method\' includes \'screen\'(print to screen) \'file\'(print to file)\
                                                                      | \'n1,n2\' is a range from n1 to n2 of url to be echoed')
-        parser.add_argument('-a', default='false', nargs=1, help='-a rule | rule is a regular expression ,if not exist , respondense will display directly')
         parser.add_argument('-x', default='false', nargs='*', help='-x name_of_xls, name_of_sheet, column, *title\n\
                                                                 | for example: student_score.xls score 4 name,age,gender,score')
-        p = parser.parse_args('-c 1 2 2 -e file'.split())
+        p = parser.parse_args('-c 2 3 3 -e file'.split())
 
         return vars(p)
-
-    def args_analyze(self, argv):
-        if argv != 'false':
-            self.analyze_method = 'regeexpr'
-            self.analyze_rule = argv[0]
-        else:
-            self.analyze_method = 'display'
-        #debug
-        #print ("analyze:",self.analyze_method,self.analyze_rule)
 
     def args_cookie(self, argv):
         try:
@@ -69,8 +57,6 @@ class Parse(object):
             self.args_echo(args['e'])
         if args['c'] != 'false':
             self.args_cookie(args['c'])
-        if args['a'] != 'false':
-            self.args_analyze(args['a'])
         if args['x'] != 'false':
             self.args_xls(args['x'])
 
