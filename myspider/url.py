@@ -8,16 +8,38 @@ class UrlClass(object):
     每个value代表了一个url地址
     每个method仅能为POST或者GET
     每个data代表了这个url地址将要传输的所有数据
+    每个text代表了这个url请求后得到的数据
     """
     def __init__(self, rawurl, data):
         self.url = []
+        addparam = []
         url_data = data
         for line in rawurl:
-            url_dict = {'value': '', 'method': '', 'data': []}
+            re = ''
+            url_dict = {'value': '', 'method': '', 'data': [], 'text': [], 'addparam': [], 're': ''}
             if line[0] != '#':
-                url, method = line.strip().split()
+                try:
+                    line_list = line.strip().split(' ')
+                    if (len(line_list) >= 2):
+                        url = line_list[0]
+                        method = line_list[1]
+                    if (len(line_list) >= 3):
+                        if 're:' in line_list[2]:
+                            re = line_list[2].split(':')[1]
+                            reindex = 3
+                        else:
+                            reindex =2
+                        paramtrans = line_list[reindex:]
+                        for ele in paramtrans:
+                            addparam = ele.split(':')
+                            url_dict['addparam'].append(addparam)
+                except ValueError:
+                    print "Error!Invalid url format, expect([URL method [re:rule] [index:param]]) but({0})".format(line)
+                except IndexError:
+                    print "Error!List index out of range, make sure text isn't empty!"
                 url_dict['value'] = url
                 url_dict['method'] = method
+                url_dict['re'] = re
                 if method == 'POST':
                     try:
                         url_dict['data'] = url_data.data[url_data.count]
