@@ -1,3 +1,11 @@
-#格式: [URL method]  eg. https://www.baidu.com GET
-http://idas.uestc.edu.cn/authserver/login?service=http://portal.uestc.edu.cn/index.portal POST
-http://portal.uestc.edu.cn/ GET
+#格式: [URL method type [index:param] [re:rule]]  
+#URL:url地址 
+#method:GET或者POST 
+#type:t代表text类型,用于访问txt,html等类型,b代表binary类型,用于访问jpg,pdf...等文件类型
+#[index:param] 代表将第index个的请求结果作为param参数传给自己
+#[re:rule] 代表使用正则比配结果
+#eg. https://www.baidu.com GET t 1:username re:\d{2} 代表GET请求www.baidu.com，使用\d{2}正则匹配结果，并将第1个url请求返回的结果作为username参数传给自己
+https://ohpjrz0l7.qnssl.com/wp-content/uploads/2016/11/background-700x220.jpg GET b
+http://idas.uestc.edu.cn/authserver/login?service=http%3A%2F%2Fportal.uestc.edu.cn%2F GET t re:value="(LT-\w{7}-\w{43}-\w{4}-\w{3})"
+http://idas.uestc.edu.cn/authserver/login?service=http://portal.uestc.edu.cn/index.portal POST t 2:lt re:gg
+http://portal.uestc.edu.cn/ GET t
