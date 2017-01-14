@@ -10,20 +10,27 @@ class Echo(object):
     def __init__(self):
         self.echo_mkdir()
 
-    def echo(self, method, text, url_count, data_count):
+    def echo(self, method,pretext, text, type, url_count, data_count):
         if method == 'screen':
             self.echo_to_screen(text)
         if method == 'file':
-            self.echo_to_file(text, url_count, data_count)
+            self.echo_to_file(pretext, text, type, url_count, data_count)
 
     def echo_to_screen(self, text):
         #加入encode
         print text.encode('utf-8')
 
-    def echo_to_file(self, text, url_count, data_count):
-        print text.encode('utf-8')
-        with open(self.file_name+'/result_url'+str(url_count)+'_'+str(data_count)+'.txt', 'w') as result:
-            result.writelines(text.encode('utf-8'))
+    def echo_to_file(self, pretext, text, type, url_count, data_count):
+        if type == 't':
+            with open(self.file_name+'/result_url'+str(url_count)+'_'+str(data_count)+'.txt', 'w') as result:
+                result.writelines(pretext.encode('utf-8'))
+                result.writelines(text.encode('utf-8'))
+                result.close()
+        elif type == 'b':
+            with open(self.file_name + '/' + pretext, 'wb') as result:
+                for chunk in text:
+                    result.write(chunk)
+                result.close()
 
     def echo_to_xls(self, text, name_of_xls, name_of_sheet, column, *title):
         """

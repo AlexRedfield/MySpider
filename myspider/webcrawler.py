@@ -42,7 +42,10 @@ class WebCrawler(object):
                 req.data = url_dict['data'][data_count]
                 data_count += 1
             for ele in url_dict['addparam']:
-                req.data[ele[1]] = self.url.url[int(ele[0])-1]['text'][0]
+                try:
+                    req.data[ele[1]] = self.url.url[int(ele[0])-1]['text'][0]
+                except IndexError:
+                    print "Error!No additional param found."
 
             if len(self.header.header) > 0:
                 req.headers = self.header.header
@@ -58,17 +61,24 @@ class WebCrawler(object):
 
 
             #数据分析
-            analyze = Analyze()
-            text_list = analyze.analyze(self.resp.text, url_dict['re'])
-            self.url.url[url_count]['text'] = text_list
+            if url_dict['type'] == 't':
+                analyze = Analyze()
+                text_list = analyze.analyze(self.resp.text, url_dict['re'])
+                self.url.url[url_count]['text'] = text_list
 
 
             #输出结果
+            if url_dict['type'] == 't':
+                pretext = url_dict['value'] + '\n' + ''.join(str(s) + '\n' for s in url_dict['data']) + '\n\n'
+                self.text = ''.join(s + '\n' for s in text_list)
+            elif url_dict['type'] == 'b':
+                m = url_dict['value'].rfind('/')
+                pretext = url_dict['value'][m+1:]
+                self.text = self.resp.iter_content(chunk_size=128)
+            else:
+                raise ValueError('[Type] name not found')
             if self.parse.echo_method != 'xls':
-                #self.text = 'cookies:' + ''.join(self.cookie.values()) + '\n' + 'content:' + self.resp.content + '\n\n' + self.text
-                self.text = url_dict['value'] + '\n' + ''.join(str(s)+'\n' for s in url_dict['data']) + '\n\n' + \
-                            ''.join(s + '\n' for s in text_list)
-                echo.echo(self.parse.echo_method, self.text, url_count, data_count)
+                echo.echo(self.parse.echo_method, pretext, self.text, url_dict['type'], url_count, data_count)
             else:
                 echo.echo_to_xls(self.text, self.parse.xls_list[0], self.parse.xls_list[1], self.parse.xls_list[2], self.parse.xls_title)
 

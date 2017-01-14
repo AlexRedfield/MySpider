@@ -1,5 +1,8 @@
 # -*- coding:utf-8 -*-
-
+URLINDEX = 0
+METHODINDEX = 1
+TYPEINDEX = 2
+REINDEX = 3
 
 class UrlClass(object):
     """
@@ -15,21 +18,21 @@ class UrlClass(object):
         addparam = []
         url_data = data
         for line in rawurl:
-            re = ''
-            url_dict = {'value': '', 'method': '', 'data': [], 'text': [], 'addparam': [], 're': ''}
+            re_text = ''
+            url = ''
+            method = ''
+            type = ''
+            url_dict = {'value': '', 'method': '', 'data': [], 'text': [], 'addparam': [], 're': '', 'type': ''}
             if line[0] != '#':
                 try:
+                    if ' re:' in line:
+                        line, re_text = line.strip().split(' re:')
                     line_list = line.strip().split(' ')
-                    if (len(line_list) >= 2):
-                        url = line_list[0]
-                        method = line_list[1]
-                    if (len(line_list) >= 3):
-                        if 're:' in line_list[2]:
-                            re = line_list[2].split(':')[1]
-                            reindex = 3
-                        else:
-                            reindex =2
-                        paramtrans = line_list[reindex:]
+                    url = line_list[URLINDEX]
+                    method = line_list[METHODINDEX]
+                    type = line_list[TYPEINDEX]
+                    if (len(line_list) >= REINDEX + 1):
+                        paramtrans = line_list[REINDEX:]
                         for ele in paramtrans:
                             addparam = ele.split(':')
                             url_dict['addparam'].append(addparam)
@@ -39,7 +42,8 @@ class UrlClass(object):
                     print "Error!List index out of range, make sure text isn't empty!"
                 url_dict['value'] = url
                 url_dict['method'] = method
-                url_dict['re'] = re
+                url_dict['re'] = re_text
+                url_dict['type'] = type
                 if method == 'POST':
                     try:
                         url_dict['data'] = url_data.data[url_data.count]
