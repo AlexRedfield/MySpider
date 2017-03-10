@@ -1,7 +1,7 @@
 # MySpider #
 
 ----------
-> 完成了前两项，并且还在优化
+> Unfinished , suspending...
 
 1. 爬取页面
 2. 数据分析
